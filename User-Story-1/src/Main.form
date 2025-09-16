@@ -29,7 +29,7 @@
                   <Component id="getOutWithFinalTicketBtn" min="-2" max="-2" attributes="0"/>
                   <Component id="lookProductForNameBtn" min="-2" max="-2" attributes="0"/>
                   <Component id="reportsBtn" min="-2" max="-2" attributes="0"/>
-                  <Component id="butProductBtn" min="-2" max="-2" attributes="0"/>
+                  <Component id="buyProductBtn" min="-2" max="-2" attributes="0"/>
                   <Component id="addProductBtn" min="-2" max="-2" attributes="0"/>
                   <Component id="listInventoryBtn" min="-2" max="-2" attributes="0"/>
               </Group>
@@ -45,7 +45,7 @@
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="listInventoryBtn" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="butProductBtn" min="-2" max="-2" attributes="0"/>
+              <Component id="buyProductBtn" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="reportsBtn" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -70,19 +70,25 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Listar Inventario"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="listInventoryBtnActionPerformed"/>
+      </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="butProductBtn">
+    <Component class="javax.swing.JButton" name="buyProductBtn">
       <Properties>
         <Property name="text" type="java.lang.String" value="Comprar producto"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="butProductBtnActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buyProductBtnActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="reportsBtn">
       <Properties>
         <Property name="text" type="java.lang.String" value="Mostar estadisticas"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="reportsBtnActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="lookProductForNameBtn">
       <Properties>

@@ -18,8 +18,6 @@ public class Main extends javax.swing.JFrame {
     public static double[] prices = new double[100];
     public static HashMap<String,Integer> stockProducts = new HashMap<>();
     
-    public static int pointerPrices = 0;
-    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Main.class.getName());
 
     /**
@@ -40,7 +38,7 @@ public class Main extends javax.swing.JFrame {
 
         addProductBtn = new javax.swing.JButton();
         listInventoryBtn = new javax.swing.JButton();
-        butProductBtn = new javax.swing.JButton();
+        buyProductBtn = new javax.swing.JButton();
         reportsBtn = new javax.swing.JButton();
         lookProductForNameBtn = new javax.swing.JButton();
         getOutWithFinalTicketBtn = new javax.swing.JButton();
@@ -55,15 +53,25 @@ public class Main extends javax.swing.JFrame {
         });
 
         listInventoryBtn.setText("Listar Inventario");
-
-        butProductBtn.setText("Comprar producto");
-        butProductBtn.addActionListener(new java.awt.event.ActionListener() {
+        listInventoryBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                butProductBtnActionPerformed(evt);
+                listInventoryBtnActionPerformed(evt);
+            }
+        });
+
+        buyProductBtn.setText("Comprar producto");
+        buyProductBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buyProductBtnActionPerformed(evt);
             }
         });
 
         reportsBtn.setText("Mostar estadisticas");
+        reportsBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reportsBtnActionPerformed(evt);
+            }
+        });
 
         lookProductForNameBtn.setText("Buscar producto por nombre");
 
@@ -79,7 +87,7 @@ public class Main extends javax.swing.JFrame {
                     .addComponent(getOutWithFinalTicketBtn)
                     .addComponent(lookProductForNameBtn)
                     .addComponent(reportsBtn)
-                    .addComponent(butProductBtn)
+                    .addComponent(buyProductBtn)
                     .addComponent(addProductBtn)
                     .addComponent(listInventoryBtn))
                 .addContainerGap(248, Short.MAX_VALUE))
@@ -92,7 +100,7 @@ public class Main extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(listInventoryBtn)
                 .addGap(18, 18, 18)
-                .addComponent(butProductBtn)
+                .addComponent(buyProductBtn)
                 .addGap(18, 18, 18)
                 .addComponent(reportsBtn)
                 .addGap(18, 18, 18)
@@ -106,9 +114,6 @@ public class Main extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addProductBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addProductBtnActionPerformed
-        if(pointerPrices == 99){
-            JOptionPane.showMessageDialog(rootPane, "Ya no se pueden ingresar mas productos porque ya no hay mas capacidad.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-        }
         
         String nameProduct = JOptionPane.showInputDialog(rootPane, "Ingrese el nombre del producto", "Ventana", JOptionPane.QUESTION_MESSAGE); 
         if(nameProduct == null) return;
@@ -123,19 +128,40 @@ public class Main extends javax.swing.JFrame {
         Integer stock = this.readInteger("Ingrese el stock del producto", "Ventana", JOptionPane.QUESTION_MESSAGE);
         if(stock == null) return;
         
-        
-        productNames.add(nameProduct);
-        prices[pointerPrices] = price;
-        stockProducts.put(nameProduct, stock);
-        
-        pointerPrices++;
-        
-        JOptionPane.showMessageDialog(rootPane, "Se ha agregado el producto exitosamente.", "Exito", JOptionPane.PLAIN_MESSAGE);
-        
-        
+        addProduct(nameProduct,price,stock);
         
     }//GEN-LAST:event_addProductBtnActionPerformed
 
+    
+    // Utilitary methods
+    public void addProduct(String nameProduct,double price, int stock){
+        
+        productNames.add(nameProduct);
+        prices[productNames.size()-1] = price;
+        stockProducts.put(nameProduct, stock);
+        
+        expandPrices();
+        JOptionPane.showMessageDialog(rootPane, "Se ha agregado el producto exitosamente.", "Exito", JOptionPane.PLAIN_MESSAGE);
+        
+    }
+    
+    public void expandPrices(){
+        
+        int currentLen = prices.length;
+        double[] copyPrices = prices.clone();
+        prices = new double[currentLen + 1];
+        
+        for(int i = 0; i<prices.length; i++){
+            prices[i] = copyPrices[i];
+        }
+        
+    }
+    
+    public int indexOfName(String nameProduct){
+        
+        return productNames.indexOf(nameProduct);
+        
+    }
     
     public Integer readInteger(String message, String title, int typeOfMessage){
         boolean intPass = false;
@@ -165,7 +191,6 @@ public class Main extends javax.swing.JFrame {
         return number;
     }
     
-    
     public Double readDouble(String message, String title, int typeOfMessage){
         boolean doublePass = false;
         double doubleNumber = 0;
@@ -194,9 +219,51 @@ public class Main extends javax.swing.JFrame {
         return doubleNumber;
     }
     
-    private void butProductBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butProductBtnActionPerformed
+    private void buyProductBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buyProductBtnActionPerformed
+        if(productNames.size()==0){
+            JOptionPane.showMessageDialog(rootPane, "No hay productos registrados", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        String[] options = productNames.toArray(new String[0]);
+        String selectedProduct = (String) JOptionPane.showInputDialog(rootPane, "Seleccione una opcion", "Ventana", JOptionPane.PLAIN_MESSAGE, null,options, options[0]);
+        
+        if(selectedProduct==null){
+            return;
+        }
+        
+        Integer quantity = readInteger("Ingrese la cantidad de producto que desea comprar","Ventana",JOptionPane.QUESTION_MESSAGE);
+        if(quantity==null)return;
+        
+        
+        
+        int quantityAvailableProduct = stockProducts.get(selectedProduct);
+        
+        if(quantity > quantityAvailableProduct){
+            JOptionPane.showMessageDialog(rootPane, "No hay suficiente stock para tu compra", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        
+        double priceProduct = prices[indexOfProduct];
+        
+        int indexOfProduct = indexOfName(selectedProduct);
+        
+        int buyOption = JOptionPane.showConfirmDialog(rootPane, "¿Esta seguro que desea comprar " + quantity + " cantidad del producto " + selectedProduct + " con un precio total de $" + priceProduct + " COP ?", "Confirmacion", JOptionPane.QUESTION_MESSAGE);
+        
+        if(buyOption == 0){
+            JOptionPane.showMessageDialog(rootPane, "Haz realizado la compra exitosamente\nproducto: " + selectedProduct + "\ncantidad: " + quantity + "\nprecio: $" + priceProduct + " COP", "Exito", JOptionPane.PLAIN_MESSAGE);
+        } else {
+            return;
+        }
+    }//GEN-LAST:event_buyProductBtnActionPerformed
+
+    private void listInventoryBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listInventoryBtnActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_butProductBtnActionPerformed
+    }//GEN-LAST:event_listInventoryBtnActionPerformed
+
+    private void reportsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportsBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_reportsBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -225,7 +292,7 @@ public class Main extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addProductBtn;
-    private javax.swing.JButton butProductBtn;
+    private javax.swing.JButton buyProductBtn;
     private javax.swing.JButton getOutWithFinalTicketBtn;
     private javax.swing.JButton listInventoryBtn;
     private javax.swing.JButton lookProductForNameBtn;
