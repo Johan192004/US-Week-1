@@ -262,7 +262,36 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_listInventoryBtnActionPerformed
 
     private void reportsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportsBtnActionPerformed
-        // TODO add your handling code here:
+        
+        if(productNames.isEmpty()){
+            JOptionPane.showMessageDialog(rootPane, "No hay productos registrados", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        double highestPrice = prices[0];
+        int highestPriceIndex = 0;
+        
+        
+        
+        double lowestPrice = prices[0];
+        int lowestPriceIndex = 0;
+        
+        
+        for(int i = 0; i<productNames.size(); i++){
+            if(prices[i]> highestPrice){
+                highestPrice = prices[i];
+                highestPriceIndex = i;
+            } else if(prices[i] < lowestPrice) {
+                lowestPrice = prices[i];
+                lowestPriceIndex = i;
+            }   
+        }
+        
+        String highestPriceName = productNames.get(highestPriceIndex);
+        String lowestPriceName = productNames.get(lowestPriceIndex);
+        
+        JOptionPane.showMessageDialog(rootPane, "Producto mas caro\nproducto: " + highestPriceName + "\n precio: $" + highestPrice + " COP\n\n Producto mas barato\nproducto: " + lowestPriceName + "\nprecio: $" + lowestPrice + " COP", "Reporte", JOptionPane.INFORMATION_MESSAGE);
+
     }//GEN-LAST:event_reportsBtnActionPerformed
 
     /**
